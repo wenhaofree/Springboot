@@ -8,8 +8,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Component;
-
-import com.mongodb.WriteResult;
+import com.mongodb.client.result.UpdateResult;
 
 import top.lrshuai.mongodb.dao.UserDao;
 import top.lrshuai.mongodb.entity.User;
@@ -33,7 +32,7 @@ public class UserDaoImpl implements UserDao{
 	 */
 	@Override
 	public void saveBathUser(List<User> users) {
-		mongoTemplate.insert(users, User.class);
+		mongoTemplate.insertAll(users);
 	}
 	
 	/**
@@ -53,8 +52,8 @@ public class UserDaoImpl implements UserDao{
 		Query query = new Query(Criteria.where("id").is(user.getId()));
 		Update update = new Update();
 		update.set("name", user.getName()).set("age", user.getAge());
-		WriteResult result =  mongoTemplate.updateFirst(query, update, User.class);
-		return result.getN();
+		UpdateResult result = mongoTemplate.updateFirst(query, update, User.class);
+		return (int) result.getModifiedCount();
 	}
 
 	/**
@@ -80,7 +79,7 @@ public class UserDaoImpl implements UserDao{
 	@Override
 	public List<User> findUserByLikeName(String name) {
 		Query query = new Query();
-		query.addCriteria(Criteria.where("name").regex(".*" +name+ ".*"));
+		query.addCriteria(Criteria.where("name").regex(".*" + name + ".*"));
 		return mongoTemplate.find(query, User.class);
 	}
 

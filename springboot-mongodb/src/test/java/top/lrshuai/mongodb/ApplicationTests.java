@@ -100,7 +100,8 @@ public class ApplicationTests {
 	
 	@Test
 	public void delTest(){
-		userRepository.delete(3l);
+		User userToDelete = new User(3l, null, null);
+		userRepository.delete(userToDelete);
 	}
 	
 	@Test
